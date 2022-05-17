@@ -7,7 +7,7 @@ const sequelize = require('../config/connection');
 class Product extends Model {}
 
 // set up fields and rules for Product model
-User.init(
+Product.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -15,43 +15,40 @@ User.init(
       primaryKey: true,
       autoIncrement: true
     },
-    username: {
+    product_name: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    email: {
-      type: DataTypes.STRING,
+    price: {
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      unique: true,
       validate: {
-        isEmail: true
+        isDecimal: true
       }
     },
-    password: {
-      type: DataTypes.STRING,
+    stock: {
+      type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 10,
       validate: {
-        len: [4]
+        isNumeric: true
+      }
+    },
+    category_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'category',
+        key: 'id'
       }
     }
   },
   {
-    hooks: {
-      // set up beforeCreate lifecycle "hook" functionality
-      async beforeCreate(newUserData) {
-        newUserData.password = await bcrypt.hash(newUserData.password, 10);
-        return newUserData;
-      },
-
-      async beforeUpdate(updatedUserData) {
-        updatedUserData.password = await bcrypt.hash(updatedUserData.password, 10);
-        return updatedUserData;
-      }
-    },
     sequelize,
     timestamps: false,
     freezeTableName: true,
     underscored: true,
-    modelName: 'user'
+    modelName: 'product',
   }
 );
+
+module.exports = Product;
